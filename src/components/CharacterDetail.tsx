@@ -38,6 +38,7 @@ export default function CharacterDetail() {
   const characterComments =
     commentsByCharacter[selectedCharacter.id] || [];
 
+    
   return (
     <div className="fixed inset-0 bg-white lg:static lg:bg-transparent z-40">
       <div className="p-4 lg:p-6">
