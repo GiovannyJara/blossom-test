@@ -24,7 +24,7 @@ export default function CharacterCard({ character, isFavorite, onFavoriteToggle 
           className="w-12 h-12 rounded-full object-cover"
         />
         <div className="ml-4">
-          <h3 className="font-medium">{character.name}</h3>
+          <h3 className="font-medium">{character.name}888</h3>
           <p className="text-sm text-gray-500">{character.species}</p>
         </div>
       </div>

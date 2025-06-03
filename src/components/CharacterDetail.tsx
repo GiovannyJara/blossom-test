@@ -15,8 +15,9 @@ export default function CharacterDetail() {
 
   // Función para agregar un nuevo comentario
   const handleAddComment = () => {
+  
     if (!selectedCharacter || !newComment.trim() || !author.trim()) return;
-
+    console.log("");
     const characterId = selectedCharacter.id;
     const newCommentObject: Comment = {
       id: (commentsByCharacter[characterId]?.length || 0) + 1,
@@ -33,18 +34,18 @@ export default function CharacterDetail() {
     setAuthor('');
   };
 
-  if (!selectedCharacter) return null;
+  if (!selectedCharacter) return null; // Esto es crucial: CharacterDetail no renderiza nada si no hay personaje
 
   const characterComments =
     commentsByCharacter[selectedCharacter.id] || [];
 
-    
   return (
-    <div className="fixed inset-0 bg-white lg:static lg:bg-transparent z-40">
+    // ESTAS SON LAS CLASES CLAVE QUE YA TIENES
+    <div className="fixed inset-0 bg-white lg:static lg:bg-transparent z-40"> 
       <div className="p-4 lg:p-6">
         <button
           onClick={() => setSelectedCharacter(null)}
-          className="p-2 -ml-2 lg:hidden"
+          className="p-2 -ml-2 lg:hidden" // ESTE BOTÓN SOLO SE MUESTRA EN MOBILE
         >
           <ArrowLeft className="w-6 h-6" />
         </button>

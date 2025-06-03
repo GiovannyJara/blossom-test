@@ -12,7 +12,17 @@ export default function CharacterList() {
   const [filters, setFilters] = useState<CharacterFilters>({});
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const { selectedCharacter } = useCharacter();
+  const { selectedCharacter, setSelectedCharacter } = useCharacter();
+
+  // Función para manejar los cambios de filtro desde SearchBar y MobileFilters
+  // Esta función fusiona los nuevos filtros con los existentes,
+  // asegurando que no se sobrescriban los filtros previos.
+  const handleAllFiltersChange = (newFilterPart: Partial<CharacterFilters>) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      ...newFilterPart,
+    }));
+  };
 
   const { loading, error, data } = useQuery(GET_CHARACTERS, {
     variables: {
@@ -43,7 +53,8 @@ export default function CharacterList() {
   const characters = data?.characters?.results || [];
   let filteredCharacters = characters;
 
-  // Apply type filter
+  // Aplica el filtro por 'type' (starred, others, all) después de la consulta GraphQL.
+  // Los filtros de 'name', 'status', 'species', 'gender' se manejan directamente en la consulta.
   if (filters.type === 'starred') {
     filteredCharacters = filteredCharacters.filter((char: Character) => favorites.has(char.id));
   } else if (filters.type === 'others') {
@@ -55,22 +66,23 @@ export default function CharacterList() {
 
   return (
     <>
-      {/* Mobile Filters */}
+      {/* Mobile Filters Overlay */}
       {showMobileFilters && (
         <MobileFilters
           filters={filters}
-          onFilterChange={setFilters}
+          onFilterChange={handleAllFiltersChange} // Usa la nueva función para fusionar filtros
           onClose={() => setShowMobileFilters(false)}
         />
       )}
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="flex flex-col lg:flex-row min-h-screen bg-white">
+        {/* Left Panel: Character List and Search/Filters */}
         <div className="w-full lg:w-[400px] lg:min-w-[400px] p-4 lg:border-r border-gray-200">
           <h1 className="text-2xl font-bold mb-6">Rick and Morty list</h1>
           
           <SearchBar 
-            onFilterChange={setFilters}
+            onFilterChange={handleAllFiltersChange} // Usa la nueva función para fusionar filtros
             onOpenMobileFilters={() => setShowMobileFilters(true)}
           />
 
@@ -87,6 +99,7 @@ export default function CharacterList() {
                       character={char}
                       isFavorite={true}
                       onFavoriteToggle={toggleFavorite}
+                      // onDelete={deleteCharacter} // Si usas onDelete, actívala aquí
                     />
                   ))}
                 </div>
@@ -104,6 +117,7 @@ export default function CharacterList() {
                     character={char}
                     isFavorite={false}
                     onFavoriteToggle={toggleFavorite}
+                    // onDelete={deleteCharacter} // Si usas onDelete, actívala aquí
                   />
                 ))}
               </div>
@@ -111,15 +125,18 @@ export default function CharacterList() {
           </div>
         </div>
 
-        <div className="hidden lg:block flex-1">
-          {selectedCharacter ? (
+        {/* Right Panel: Character Details (visible on large screens or as an overlay on small screens) */}
+        {selectedCharacter && (
+          <div className="lg:block flex-1">
             <CharacterDetail />
-          ) : (
-            <div className="h-full flex items-center justify-center text-gray-500">
-              Select a character to view details
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+        {/* Placeholder message for desktop when no character is selected */}
+        {!selectedCharacter && (
+          <div className="hidden lg:flex flex-1 items-center justify-center text-gray-500">
+            Select a character to view details
+          </div>
+        )}
       </div>
     </>
   );

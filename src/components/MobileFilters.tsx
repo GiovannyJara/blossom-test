@@ -1,16 +1,18 @@
+// 4to archivo: MobileFilters.tsx
 import { ArrowLeft } from 'lucide-react';
 import { CharacterFilters } from '../types/character';
 
 interface MobileFiltersProps {
   filters: CharacterFilters;
-  onFilterChange: (filters: CharacterFilters) => void;
+  onFilterChange: (filters: Partial<CharacterFilters>) => void; // <--- También ajustar el tipo aquí
   onClose: () => void;
 }
 
 export default function MobileFilters({ filters, onFilterChange, onClose }: MobileFiltersProps) {
   const handleFilterChange = (key: keyof CharacterFilters, value: string) => {
-    const newFilters = { ...filters, [key]: value };
-    onFilterChange(newFilters);
+    // Esto ya funciona para fusionar, ya que onFilterChange en CharacterList hace el merge.
+    // Solo aseguramos que el tipo sea consistente.
+    onFilterChange({ [key]: value }); 
   };
 
   return (
